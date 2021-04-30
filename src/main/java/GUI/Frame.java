@@ -7,9 +7,9 @@ import lombok.Setter;
 import model.Student;
 import model.User;
 import model.UserType;
+import notifiers.EventAggregator;
 
 import javax.swing.*;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,8 +27,11 @@ public class Frame {
 
     private UserTable userTable;
     private JTable jTable;
+
+    private EventAggregator eventAggregator;
     public Frame()
     {
+        eventAggregator = new EventAggregator();
         frame = new JFrame();
         frame.setSize(500, 500);
         frame.setVisible(true);
@@ -61,9 +64,10 @@ public class Frame {
 
     private void loadTable()
     {
-        userTable = new UserTable(userTree.getLecturers());
+        userTable = new UserTable(userTree.getLecturers(), userTree);
         jTable = userTable.getTable();
         tableScrollPane = new JScrollPane(jTable);
+        eventAggregator.addSubscriber(userTable);
 
         /*AddUserModalFrame addUserModalFrame = new AddUserModalFrame(frame, UserType.STUDENT, userTree);
         addUserModalFrame.getJDialog().setVisible(true);*/
@@ -88,21 +92,8 @@ public class Frame {
     {
         userTree.getTree().getSelectionModel().addTreeSelectionListener(e -> {
             lastFromTreePath = e.getPath().getLastPathComponent().toString();
+            eventAggregator.publish(e);
 
-            if(e.getPath().toString().contains("Student"))
-            {
-                if(!e.getPath().getLastPathComponent().toString().contains("Student"))
-                {
-                    System.out.println(userTree.getTree().getMinSelectionRow() - 3);
-                }
-                userTable.setTable(userTree.getStudents());
-            }else{
-                if(!e.getPath().getLastPathComponent().toString().contains("Lecturer"))
-                {
-                    System.out.println(userTree.getTree().getMinSelectionRow() - 2);
-                }
-                userTable.setTable(userTree.getLecturers());
-            }
             selectedLabel.setText(e.getPath().toString());
 
             jTable = userTable.getTable();
@@ -118,13 +109,16 @@ public class Frame {
                 if(SwingUtilities.isRightMouseButton(e) && jTable.getSelectedRow() >= 0)
                 {
                     UserType userType;
-                    if(lastFromTreePath.equals("Student")){
+                    if(selectedLabel.getText().contains("Students")){
                         userType = UserType.STUDENT;
                     }else{
                         userType = UserType.LECTURER;
                     }
                     ModifyUserModalFrame modalFrame = new ModifyUserModalFrame(frame, userType, userTree, jTable.getSelectedRow());
-                    modalFrame.getJDialog().setVisible(true);
+                    eventAggregator.addSubscriber(modalFrame);
+                    eventAggregator.publish(e);
+                    eventAggregator.removeSubscriber(modalFrame);
+
                 }
             }
         });

@@ -8,11 +8,13 @@ import notifiers.ISubscriber;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 @Setter
 @Getter
-public class UserTree implements ISubscriber<User> {
+public class UserTree implements ISubscriber<ActionEvent> {
 
     private JTree tree;
     private DefaultMutableTreeNode lecturersRoot;
@@ -85,13 +87,17 @@ public class UserTree implements ISubscriber<User> {
         treeModel.reload(root);
     }
 
-    @Override
-    public void Handle(User notification) {
 
+    @Override
+    public void Handle(ActionEvent notification) {
+        refreshStudents();
+        refreshLecturers();
     }
 
     @Override
-    public Class<User> getT() {
-        return User.class;
+    public Class<ActionEvent> getT() {
+        return ActionEvent.class;
     }
 }
+
+

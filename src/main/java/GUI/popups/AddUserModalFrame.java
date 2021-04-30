@@ -7,15 +7,17 @@ import model.Lecturer;
 import model.Student;
 import model.User;
 import model.UserType;
+import notifiers.ISubscriber;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 @Setter
 @Getter
-public class AddUserModalFrame {
+public class AddUserModalFrame implements ISubscriber<ActionEvent> {
     private JPanel jPanel;
     private JDialog jDialog;
 
@@ -150,5 +152,15 @@ public class AddUserModalFrame {
         userToReturn.setAddress(addressField.getText());
         System.out.println(userToReturn);
         return userToReturn;
+    }
+
+    @Override
+    public void Handle(ActionEvent notification) {
+        jDialog.setVisible(true);
+    }
+
+    @Override
+    public Class<ActionEvent> getT() {
+        return ActionEvent.class;
     }
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class EventAggregator implements IEventAggregator {
 
-    private HashMap<Class<?>, ArrayList<ISubscriber>> subscribers;
+    private final HashMap<Class<?>, ArrayList<ISubscriber>> subscribers;
 
     public EventAggregator()
     {

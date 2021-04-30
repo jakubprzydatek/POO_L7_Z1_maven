@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         new Frame();
 
-        ISubscriber<String> user = new Student();
+        /*ISubscriber<String> user = new Student();
 
         System.out.println(user.getClass());
         System.out.println(Student.class);
@@ -16,6 +16,6 @@ public class Main {
         EventAggregator eventAggregator = new EventAggregator();
         eventAggregator.addSubscriber(user);
 
-        eventAggregator.publish("hi");
+        eventAggregator.publish("hi");*/
     }
 }

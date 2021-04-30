@@ -6,17 +6,19 @@ import model.User;
 import notifiers.ISubscriber;
 
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
 @Getter
 @Setter
-public class UserTable implements ISubscriber<ArrayList> {
+public class UserTable implements ISubscriber<TreeSelectionEvent> {
 
     private JTable table;
-
-    public UserTable(ArrayList<User> users)
+    private UserTree userTree;
+    public UserTable(ArrayList<User> users, UserTree userTree)
     {
+        this.userTree = userTree;
         table = new JTable();
         setTable(users);
 
@@ -63,13 +65,20 @@ public class UserTable implements ISubscriber<ArrayList> {
         return colNames;
     }
 
-    @Override
-    public void Handle(ArrayList notification) {
 
+    @Override
+    public void Handle(TreeSelectionEvent notification) {
+        if(notification.getPath().toString().contains("Student"))
+        {
+            setTable(userTree.getStudents());
+        }else{
+            setTable(userTree.getLecturers());
+
+        }
     }
 
     @Override
-    public Class<ArrayList> getT() {
-        return ArrayList.class;
+    public Class<TreeSelectionEvent> getT() {
+        return TreeSelectionEvent.class;
     }
 }

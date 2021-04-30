@@ -3,18 +3,19 @@ package GUI.popups;
 import GUI.UserTree;
 import lombok.Getter;
 import lombok.Setter;
-import model.Lecturer;
-import model.Student;
 import model.User;
 import model.UserType;
+import notifiers.ISubscriber;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 @Setter
 @Getter
-public class ModifyUserModalFrame {
+public class ModifyUserModalFrame implements ISubscriber<MouseEvent> {
     private JPanel jPanel;
     private JDialog jDialog;
 
@@ -84,6 +85,19 @@ public class ModifyUserModalFrame {
         JPanel panel1 = new JPanel();
         panel1.setLayout(new FlowLayout());
         JButton addButton;
+        addButton = getButtonType(userType);
+
+
+        addButton.setBounds(0, 80, 100, 20);
+        panel1.add(addButton);
+
+        dialogContainer.add(panel1, BorderLayout.SOUTH);
+
+        return modelDialog;
+    }
+
+    private JButton getButtonType(UserType userType) {
+        JButton addButton;
         if(userType == UserType.LECTURER)
         {
             addButton = new JButton("Modify Lecturer");
@@ -104,14 +118,7 @@ public class ModifyUserModalFrame {
                     }
             );
         }
-
-
-        addButton.setBounds(0, 80, 100, 20);
-        panel1.add(addButton);
-
-        dialogContainer.add(panel1, BorderLayout.SOUTH);
-
-        return modelDialog;
+        return addButton;
     }
 
     public void setFieldsWithDefaultValue()
@@ -147,7 +154,17 @@ public class ModifyUserModalFrame {
         user.set_name(nameField.getText());
         user.setBirthDate(birthDateField.getText());
         user.setAddress(addressField.getText());
-        System.out.println(user);
+        //System.out.println(user);
 
+    }
+
+    @Override
+    public void Handle(MouseEvent notification) {
+        jDialog.setVisible(true);
+    }
+
+    @Override
+    public Class<MouseEvent> getT() {
+        return MouseEvent.class;
     }
 }
